@@ -149,7 +149,7 @@ controllers = []
 #settingScreens[-1].exec_()
 
 s = settings()
-s.exec_()
+s.show()
 
 sys.exit(app.exec_())
 
