@@ -29,8 +29,12 @@ class controller(QtGui.QWidget):
         self.scoreButton.setGeometry(10, 165, 100, 30)
         QtCore.QObject.connect(self.scoreButton, QtCore.SIGNAL("clicked()"), self.setScore)
         self.show()
-        i = settingScreens[0]
-        i.close()
+        # i = settingScreens[0]
+        # i.close()
+
+    def closeEvent(self, e):
+        self.team.close()
+        e.accept()
 
 
 
@@ -78,54 +82,61 @@ class team(QtGui.QWidget):
         self.move(x-x_w, y-y_w)
 
 
-class settings(QtGui.QWidget):
+class settings(QtGui.QDialog):
 
 
     def __init__(self):
         super(settings, self).__init__()
         title = "settings"
         self.setWindowTitle(str(title))
-        self.setFixedSize(200,200)
-        self.setTeamsLabel = QtGui.QLabel('Number of teams:', self)
-        self.setTeamsLabel.setAlignment(QtCore.Qt.AlignLeft)
-        self.setTeamsLabel.setGeometry(10, 16, 90, 15) #left, top, width, height
-        self.setTeams = QtGui.QTextEdit('2', self)
-        self.setTeams.setGeometry(160, 10, 30, 24)
-        self.setPositiveLabel = QtGui.QLabel('Positive score:', self)
-        self.setPositiveLabel.setAlignment(QtCore.Qt.AlignLeft)
-        self.setPositiveLabel.setGeometry(10, 46, 90, 15)
-        self.setPositive = QtGui.QTextEdit('1', self)
-        self.setPositive.setGeometry(160, 40, 30, 24)
-        self.setNegativeLabel = QtGui.QLabel('Negative score:', self)
-        self.setNegativeLabel.setAlignment(QtCore.Qt.AlignLeft)
-        self.setNegativeLabel.setGeometry(10, 76, 90, 15)
-        self.setNegative = QtGui.QTextEdit('1', self)
-        self.setNegative.setGeometry(160, 70, 30, 24)
-        self.setFontLabel = QtGui.QLabel('Font size:', self)
-        self.setFontLabel.setAlignment(QtCore.Qt.AlignLeft)
-        self.setFontLabel.setGeometry(10, 106, 90, 15)
-        self.setFont = QtGui.QTextEdit('70', self)
-        self.setFont.setGeometry(160, 100, 30, 24)
-        self.setOKButton = QtGui.QPushButton('OK', self)
-        self.setOKButton.setGeometry(140, 160, 50, 30)
-        QtCore.QObject.connect(self.setOKButton, QtCore.SIGNAL("clicked()"), self.makeControllers)
-        self.yearLabel = QtGui.QLabel('2013', self)
-        self.yearLabel.setAlignment(QtCore.Qt.AlignLeft)
-        self.yearLabel.setGeometry(10, 160, 30, 15)
-        self.nameLabel = QtGui.QLabel('Videokomiteen', self)
-        self.nameLabel.setAlignment(QtCore.Qt.AlignLeft)
-        self.nameLabel.setGeometry(10, 175, 90, 15)
-        self.show()
+        #self.setFixedSize(200,200)
+
+        self.layout = QtGui.QGridLayout(self)
+
+        # number of teams
+        self.setTeams = QtGui.QLineEdit('2')
+        self.setTeams.setValidator(QtGui.QIntValidator())
+        self.layout.addWidget(QtGui.QLabel('Number of teams:'), 0, 0)
+        self.layout.addWidget(self.setTeams, 0, 1)
+
+        # positive score
+        self.setPositive = QtGui.QLineEdit('1', self)
+        self.setPositive.setValidator(QtGui.QIntValidator())
+        self.layout.addWidget(QtGui.QLabel('Positive score:'), 1, 0)
+        self.layout.addWidget(self.setPositive, 1, 1)
+    
+        # negative score
+        self.setNegative = QtGui.QLineEdit('1', self)
+        self.setNegative.setValidator(QtGui.QIntValidator())
+        self.layout.addWidget(QtGui.QLabel('Negative score:'), 2, 0)
+        self.layout.addWidget(self.setNegative, 2, 1)
+
+        # font size
+        self.setFont = QtGui.QLineEdit('70', self)
+        self.setFont.setValidator(QtGui.QIntValidator())
+        self.layout.addWidget(QtGui.QLabel('Font size:'), 3, 0)
+        self.layout.addWidget(self.setFont)
+
+        # ok button
+        self.okButton = QtGui.QPushButton('OK')
+        self.okButton.clicked.connect(self.makeControllers)
+        self.layout.addWidget(self.okButton, 4, 1)
+
+        self.layout.addWidget(QtGui.QLabel('Videokomiteen<br>2013'),4,0)
+
+        self.setLayout(self.layout)
+        #self.show()
 
 
 
     def makeControllers(self):
-        teams = int(self.setTeams.toPlainText())
-        positive = int(self.setPositive.toPlainText())
-        negative = int(self.setNegative.toPlainText())
-        font = self.setFont.toPlainText()
+        teams = int(self.setTeams.text())
+        positive = int(self.setPositive.text())
+        negative = int(self.setNegative.text())
+        font = self.setFont.text()
         for i in range(1, teams+1):
             controllers.append(controller(i, team(i, positive, negative, font)))
+        self.accept()
 
 
 
@@ -133,7 +144,12 @@ class settings(QtGui.QWidget):
 app = QtGui.QApplication(sys.argv)
 settingScreens = []
 controllers = []
-settingScreens.append(settings())
+#settingScreens.append(settings())
+#settingScreens[-1].exec_()
+
+s = settings()
+s.exec_()
+
 sys.exit(app.exec_())
 
 
