@@ -89,6 +89,7 @@ class settings(QtGui.QDialog):
         super(settings, self).__init__()
         title = "settings"
         self.setWindowTitle(str(title))
+        self.resize(190,200)
         #self.setFixedSize(200,200)
 
         self.layout = QtGui.QGridLayout(self)
